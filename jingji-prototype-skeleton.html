@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>静记 · 页面骨架（结构确认版）</title>
+<style>
+  /* ============================================================
+     说明：本文件仅为「页面骨架」——只表达结构、层级、尺寸占位，
+     不含任何 Material 3 视觉样式。灰色块 = 文字/图片占位。
+     画布固定 375px，所有尺寸为固定像素，无响应式缩放。
+     ============================================================ */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #f2f2f2;
+    color: #333;
+    font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ---------- 页面外部的评审工具条（不属于 App 画布） ---------- */
+  .review-head {
+    position: sticky; top: 0; z-index: 100;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 16px 32px 12px;
+  }
+  .review-head h1 { font-size: 18px; margin: 0 0 4px; }
+  .review-head p { margin: 0 0 12px; color: #777; font-size: 13px; }
+  .review-nav { display: flex; flex-wrap: wrap; gap: 8px; }
+  .review-nav a {
+    font-size: 12px; color: #333; text-decoration: none;
+    border: 1px solid #bbb; border-radius: 4px; padding: 4px 10px; background: #fafafa;
+  }
+  .review-nav a:hover { background: #eee; }
+
+  /* ---------- 画布 ---------- */
+  .gallery {
+    display: flex; flex-wrap: wrap; gap: 32px;
+    padding: 28px 32px 80px; align-items: flex-start;
+  }
+  .screen { width: 375px; }
+  .screen-label {
+    font-size: 13px; font-weight: 600; color: #444;
+    margin-bottom: 8px; padding-left: 2px;
+  }
+  .screen-label span { display: block; font-weight: 400; color: #999; font-size: 12px; }
+
+  .phone {
+    width: 375px; height: 812px;
+    background: #fff;
+    border: 1px solid #999;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .phone.flash { outline: 3px solid #7aa7d9; outline-offset: 2px; }
+
+  /* ---------- 线框基础元素 ---------- */
+  .statusbar {
+    height: 28px; flex: none;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px dashed #ddd;
+    font-size: 11px; color: #999;
+  }
+  .statusbar .sb-icons { display: flex; gap: 6px; }
+  .statusbar .sb-icons i { width: 10px; height: 10px; border: 1px solid #bbb; border-radius: 2px; }
+
+  .appbar {
+    height: 56px; flex: none;
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 8px 0 8px;
+    border-bottom: 1px dashed #ddd;
+  }
+  .appbar .ab-title { font-size: 16px; font-weight: 600; flex: 1; padding-left: 8px; }
+  .appbar .ab-spacer { flex: 1; }
+
+  .body {
+    flex: 1; overflow-y: auto;
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .body.tight { padding: 0; gap: 0; }
+
+  .wf-icon {
+    width: 40px; height: 40px; flex: none;
+    border: 1px dashed #bbb; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #888;
+  }
+  .wf-icon.sm { width: 24px; height: 24px; font-size: 10px; }
+
+  .wf-line { height: 8px; background: #e3e3e3; border-radius: 4px; }
+  .wf-line.w40 { width: 40%; }
+  .wf-line.w60 { width: 60%; }
+  .wf-line.w80 { width: 80%; }
+
+  .wf-input {
+    height: 56px;
+    border: 1px solid #aaa; border-radius: 4px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 12px; color: #999; font-size: 14px;
+  }
+  .wf-input.textarea { height: 220px; align-items: flex-start; padding-top: 16px; }
+
+  .wf-btn {
+    height: 40px;
+    border: 1px solid #666; border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: #333; background: #fff;
+    cursor: pointer; flex: none;
+  }
+  .wf-btn.filled { background: #d9d9d9; }
+  .wf-btn.block { width: 100%; }
+  .wf-btn.disabled { color: #bbb; border-color: #ccc; background: #f7f7f7; cursor: default; }
+
+  .wf-textbtn {
+    height: 40px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: #555; cursor: pointer;
+  }
+
+  .wf-chip {
+    height: 32px; padding: 0 12px; flex: none;
+    border: 1px solid #aaa; border-radius: 8px;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; color: #555; background: #fff; cursor: pointer;
+  }
+  .wf-chip.active { background: #ddd; border-color: #777; color: #222; }
+
+  .wf-divider { height: 1px; background: #e3e3e3; }
+
+  .wf-card {
+    border: 1px solid #bbb; border-radius: 12px;
+    padding: 12px; display: flex; flex-direction: column; gap: 8px;
+    cursor: pointer; background: #fff;
+  }
+  .wf-row { display: flex; align-items: center; gap: 12px; }
+  .wf-row.between { justify-content: space-between; }
+  .wf-col { display: flex; flex-direction: column; gap: 8px; }
+
+  .wf-thumb {
+    width: 56px; height: 56px; flex: none;
+    border: 1px solid #bbb; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #999; background: #f7f7f7;
+  }
+  .wf-avatar {
+    width: 88px; height: 88px; border-radius: 50%;
+    border: 1px dashed #999; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #999;
+  }
+  .wf-check { width: 18px; height: 18px; flex: none; border: 1px solid #888; border-radius: 2px; }
+  .wf-check.checked { background: #cfcfcf; }
+  .wf-switch {
+    width: 52px; height: 32px; flex: none; position: relative;
+    border: 1px solid #888; border-radius: 16px; background: #eee;
+  }
+  .wf-switch::after {
+    content: ""; position: absolute; top: 4px; left: 4px;
+    width: 22px; height: 22px; border-radius: 50%; background: #bbb;
+  }
+  .wf-switch.on { background: #d5d5d5; }
+  .wf-switch.on::after { left: 24px; background: #777; }
+  .wf-radio { width: 20px; height: 20px; flex: none; border: 1px solid #888; border-radius: 50%; }
+  .wf-radio.on { border: 6px solid #999; }
+
+  .wf-note {
+    font-size: 11px; color: #999; border: 1px dashed #ccc; border-radius: 4px;
+    padding: 8px 10px; background: #fbfbfb;
+  }
+
+  /* 列表行（设置 / 标签 / 备份记录） */
+  .list-row {
+    min-height: 56px; display: flex; align-items: center; gap: 12px;
+    padding: 8px 16px; border-bottom: 1px solid #eee; background: #fff;
+  }
+  .list-row:last-child { border-bottom: none; }
+  .list-row .lr-main { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .list-row .lr-sub { font-size: 12px; color: #999; }
+  .list-row .lr-arrow { color: #aaa; font-size: 16px; }
+
+  .section-title { font-size: 12px; color: #999; padding: 16px 16px 4px; }
+
+  /* 底部导航（Material 3 NavigationBar 默认高 80） */
+  .navbar {
+    height: 80px; flex: none;
+    border-top: 1px dashed #ccc;
+    display: flex; align-items: center;
+  }
+  .navbar .nav-item {
+    flex: 1; height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px;
+    font-size: 11px; color: #888; cursor: pointer;
+  }
+  .navbar .nav-item .wf-icon { border-style: solid; border-color: #ddd; }
+  .navbar .nav-item.active { color: #222; font-weight: 600; }
+  .navbar .nav-item.active .wf-icon { border-color: #666; background: #e8e8e8; }
+
+  /* FAB（Material 3 默认 56×56） */
+  .fab {
+    position: absolute; right: 16px; bottom: 96px;
+    width: 56px; height: 56px; border-radius: 16px;
+    border: 1px solid #777; background: #d9d9d9;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: #444; cursor: pointer; z-index: 5;
+  }
+
+  .hint-text { font-size: 12px; color: #999; }
+  .label { font-size: 12px; color: #888; }
+  .strong { font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- ================= 评审工具条（不属于 App） ================= -->
+<header class="review-head">
+  <h1>静记 · 页面骨架 v1（结构确认版）</h1>
+  <p>灰色块为文字 / 图片占位；虚线为分组边界。点击带下划交互的按钮会跳转到目标页并高亮。画布固定 375×812，无响应式。此版本只确认结构，确认后再做 Material 3 视觉精修。</p>
+  <nav class="review-nav">
+    <a href="#s-lock">01 解锁</a>
+    <a href="#s-notes">02 笔记列表</a>
+    <a href="#s-edit">03 笔记编辑</a>
+    <a href="#s-tags">04 标签管理</a>
+    <a href="#s-todos">05 待办清单</a>
+    <a href="#s-settings">06 设置</a>
+    <a href="#s-privacy">07 隐私与存储</a>
+    <a href="#s-security">08 加密与生物识别</a>
+    <a href="#s-theme">09 主题</a>
+    <a href="#s-backup">10 备份与恢复</a>
+    <a href="#s-sync">11 云同步</a>
+  </nav>
+</header>
+
+<main class="gallery">
+
+  <!-- ============ 01 解锁页 ============ -->
+  <section class="screen" id="s-lock">
+    <div class="screen-label">01 解锁页 <span>密码 / 指纹解锁 · 进入后解密本地数据库</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="body" style="justify-content:center; align-items:center; gap:24px; padding:32px;">
+        <div class="wf-avatar">LOGO</div>
+        <div class="wf-col" style="align-items:center; gap:8px;">
+          <div class="strong" style="font-size:20px;">静记</div>
+          <div class="hint-text">本地加密存储 · 数据仅保存在本机</div>
+        </div>
+        <div class="wf-input" style="width:100%;">输入应用密码</div>
+        <div class="wf-btn filled block" data-goto="s-notes">解锁</div>
+        <div class="wf-textbtn">使用指纹 / 面容解锁</div>
+        <div class="wf-textbtn">忘记密码？</div>
+        <div class="wf-note" style="width:100%;">说明：验证通过后解密本地数据库；忘记密码将无法恢复数据</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 笔记列表 ============ -->
+  <section class="screen" id="s-notes">
+    <div class="screen-label">02 笔记列表（首页） <span>本地搜索 · 标签筛选 · 排序 · 底部导航</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="ab-title">静记</div>
+        <div class="wf-icon">搜索</div>
+        <div class="wf-icon">更多</div>
+      </div>
+      <div class="body" style="gap:12px;">
+        <div class="wf-input" style="height:48px;">搜索本地笔记</div>
+        <div class="wf-row" style="flex-wrap:wrap; gap:8px;">
+          <div class="wf-chip active">全部</div>
+          <div class="wf-chip">收藏</div>
+          <div class="wf-chip" data-goto="s-tags">标签 ▾</div>
+          <div class="wf-chip">排序 ▾</div>
+        </div>
+        <div class="wf-card" data-goto="s-edit">
+          <div class="strong">笔记标题占位</div>
+          <div class="wf-col" style="gap:6px;">
+            <div class="wf-line"></div>
+            <div class="wf-line w80"></div>
+            <div class="wf-line w60"></div>
+          </div>
+          <div class="wf-row between">
+            <div class="wf-row" style="gap:6px;">
+              <div class="wf-chip" style="height:24px; font-size:11px;">学习</div>
+              <div class="wf-chip" style="height:24px; font-size:11px;">课程</div>
+            </div>
+            <div class="hint-text">10:24 · 图片×1</div>
+          </div>
+        </div>
+        <div class="wf-card" data-goto="s-edit">
+          <div class="strong">密码备忘占位</div>
+          <div class="wf-col" style="gap:6px;">
+            <div class="wf-line"></div>
+            <div class="wf-line w60"></div>
+          </div>
+          <div class="wf-row between">
+            <div class="wf-row" style="gap:6px;">
+              <div class="wf-chip" style="height:24px; font-size:11px;">密码备忘</div>
+            </div>
+            <div class="hint-text">昨天</div>
+          </div>
+        </div>
+        <div class="wf-card" data-goto="s-edit">
+          <div class="strong">学习提纲占位</div>
+          <div class="wf-col" style="gap:6px;">
+            <div class="wf-line"></div>
+            <div class="wf-line w80"></div>
+            <div class="wf-line w40"></div>
+          </div>
+          <div class="wf-row between">
+            <div class="wf-row" style="gap:6px;">
+              <div class="wf-chip" style="height:24px; font-size:11px;">灵感</div>
+            </div>
+            <div class="hint-text">11-17</div>
+          </div>
+        </div>
+        <div class="wf-note">列表按「最后修改时间」倒序；支持按标签 / 收藏筛选</div>
+      </div>
+      <div class="fab" data-goto="s-edit">＋</div>
+      <div class="navbar">
+        <div class="nav-item active"><div class="wf-icon sm"></div><span>笔记</span></div>
+        <div class="nav-item" data-goto="s-todos"><div class="wf-icon sm"></div><span>待办</span></div>
+        <div class="nav-item" data-goto="s-settings"><div class="wf-icon sm"></div><span>设置</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 03 笔记编辑 ============ -->
+  <section class="screen" id="s-edit">
+    <div class="screen-label">03 笔记编辑 / 详情 <span>标题 + 正文 + 标签 + 附件（图片/录音）</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="wf-icon" data-goto="s-notes">返回</div>
+        <div class="ab-title">编辑笔记</div>
+        <div class="wf-icon">收藏</div>
+        <div class="wf-icon">更多</div>
+      </div>
+      <div class="body" style="gap:16px;">
+        <div class="wf-input" style="border:none; border-bottom:1px solid #aaa; border-radius:0; font-size:16px; color:#444;">标题</div>
+        <div class="wf-input textarea">
+          <div class="wf-col" style="width:100%; gap:12px;">
+            <div class="wf-line"></div>
+            <div class="wf-line"></div>
+            <div class="wf-line w80"></div>
+            <div class="wf-line"></div>
+            <div class="wf-line w60"></div>
+          </div>
+        </div>
+        <div class="wf-row" style="flex-wrap:wrap; gap:8px;">
+          <div class="wf-chip active">学习 ×</div>
+          <div class="wf-chip">＋ 添加标签</div>
+        </div>
+        <div class="wf-col" style="gap:8px;">
+          <div class="label">附件（存储于 App 沙盒，数据库仅存路径）</div>
+          <div class="wf-row">
+            <div class="wf-thumb">图片</div>
+            <div class="wf-col" style="flex:1; gap:6px;">
+              <div class="wf-line w60"></div>
+              <div class="hint-text">IMG_001.jpg · 2.4 MB</div>
+            </div>
+          </div>
+          <div class="wf-row">
+            <div class="wf-thumb">录音</div>
+            <div class="wf-col" style="flex:1; gap:6px;">
+              <div class="wf-line w40"></div>
+              <div class="hint-text">录音 00:32</div>
+            </div>
+          </div>
+        </div>
+        <div class="wf-row" style="gap:8px;">
+          <div class="wf-chip">＋ 图片</div>
+          <div class="wf-chip">＋ 录音</div>
+          <div class="wf-chip">＋ 待办</div>
+        </div>
+        <div class="wf-note">所有改动实时写入本地数据库；此页「更多」内含：导出 Markdown / PDF、删除、复制</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04 标签管理 ============ -->
+  <section class="screen" id="s-tags">
+    <div class="screen-label">04 标签管理 <span>标签表 + 笔记标签关联表（多对多）</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="wf-icon" data-goto="s-notes">返回</div>
+        <div class="ab-title">标签管理</div>
+        <div class="wf-icon">新建</div>
+      </div>
+      <div class="body tight">
+        <div class="list-row">
+          <div class="wf-icon sm" style="border-style:solid;">#</div>
+          <div class="lr-main"><div>学习</div><div class="lr-sub">12 条笔记</div></div>
+          <div class="lr-arrow">⋮</div>
+        </div>
+        <div class="list-row">
+          <div class="wf-icon sm" style="border-style:solid;">#</div>
+          <div class="lr-main"><div>灵感</div><div class="lr-sub">5 条笔记</div></div>
+          <div class="lr-arrow">⋮</div>
+        </div>
+        <div class="list-row">
+          <div class="wf-icon sm" style="border-style:solid;">#</div>
+          <div class="lr-main"><div>课程</div><div class="lr-sub">8 条笔记</div></div>
+          <div class="lr-arrow">⋮</div>
+        </div>
+        <div class="list-row">
+          <div class="wf-icon sm" style="border-style:solid;">#</div>
+          <div class="lr-main"><div>密码备忘</div><div class="lr-sub">2 条笔记</div></div>
+          <div class="lr-arrow">⋮</div>
+        </div>
+        <div style="padding:16px;">
+          <div class="wf-btn block">＋ 新建标签</div>
+        </div>
+        <div class="hint-text" style="padding:0 16px;">行右侧 ⋮ 弹出：重命名 / 删除（删除仅解除关联，不删笔记）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 05 待办清单 ============ -->
+  <section class="screen" id="s-todos">
+    <div class="screen-label">05 待办清单 <span>勾选状态 · 截止时间 · 本地提醒</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="ab-title">待办</div>
+        <div class="wf-icon">新增</div>
+      </div>
+      <div class="body" style="gap:12px;">
+        <div class="wf-row" style="flex-wrap:wrap; gap:8px;">
+          <div class="wf-chip active">全部</div>
+          <div class="wf-chip">今日</div>
+          <div class="wf-chip">已逾期</div>
+          <div class="wf-chip">已完成</div>
+        </div>
+        <div class="wf-card" style="flex-direction:row; align-items:flex-start; gap:12px;">
+          <div class="wf-check"></div>
+          <div class="wf-col" style="flex:1; gap:6px;">
+            <div>待办内容占位（关联笔记：学习提纲）</div>
+            <div class="hint-text">截止 今天 20:00 · 本地提醒</div>
+          </div>
+        </div>
+        <div class="wf-card" style="flex-direction:row; align-items:flex-start; gap:12px;">
+          <div class="wf-check"></div>
+          <div class="wf-col" style="flex:1; gap:6px;">
+            <div>复习 Flutter 布局组件</div>
+            <div class="hint-text">截止 11-20 09:00</div>
+          </div>
+        </div>
+        <div class="wf-card" style="flex-direction:row; align-items:flex-start; gap:12px;">
+          <div class="wf-check checked"></div>
+          <div class="wf-col" style="flex:1; gap:6px;">
+            <div style="color:#999; text-decoration:line-through;">已完成待办占位</div>
+            <div class="hint-text">截止 11-18</div>
+          </div>
+        </div>
+        <div class="wf-note">待办与笔记同一数据库，可挂靠某条笔记；提醒使用系统本地闹钟</div>
+      </div>
+      <div class="fab">＋</div>
+      <div class="navbar">
+        <div class="nav-item" data-goto="s-notes"><div class="wf-icon sm"></div><span>笔记</span></div>
+        <div class="nav-item active"><div class="wf-icon sm"></div><span>待办</span></div>
+        <div class="nav-item" data-goto="s-settings"><div class="wf-icon sm"></div><span>设置</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 06 设置 ============ -->
+  <section class="screen" id="s-settings">
+    <div class="screen-label">06 设置 <span>数据与隐私 / 同步 / 外观 / 其他</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="ab-title">设置</div>
+      </div>
+      <div class="body tight">
+        <div class="section-title">数据与隐私</div>
+        <div class="list-row" data-goto="s-privacy">
+          <div class="lr-main"><div>隐私与存储说明</div><div class="lr-sub">默认数据仅保存在本机</div></div>
+          <div class="lr-arrow">›</div>
+        </div>
+        <div class="list-row" data-goto="s-security">
+          <div class="lr-main"><div>加密与生物识别</div><div class="lr-sub">数据库加密 · 密码锁 · 指纹</div></div>
+          <div class="lr-arrow">›</div>
+        </div>
+        <div class="list-row" data-goto="s-backup">
+          <div class="lr-main"><div>备份与恢复</div><div class="lr-sub">上次备份：今天 02:00</div></div>
+          <div class="lr-arrow">›</div>
+        </div>
+        <div class="section-title">同步（附加功能）</div>
+        <div class="list-row" data-goto="s-sync">
+          <div class="lr-main"><div>云同步</div><div class="lr-sub">未开启 · 关闭时完全离线</div></div>
+          <div class="lr-arrow">›</div>
+        </div>
+        <div class="section-title">外观</div>
+        <div class="list-row" data-goto="s-theme">
+          <div class="lr-main"><div>主题</div><div class="lr-sub">跟随系统</div></div>
+          <div class="lr-arrow">›</div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main"><div>字体大小</div><div class="lr-sub">标准</div></div>
+          <div class="lr-arrow">›</div>
+        </div>
+        <div class="section-title">其他</div>
+        <div class="list-row">
+          <div class="lr-main"><div>导出笔记</div><div class="lr-sub">Markdown / PDF 保存到本地</div></div>
+          <div class="lr-arrow">›</div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main"><div>关于静记</div><div class="lr-sub">版本 1.0.0</div></div>
+          <div class="lr-arrow">›</div>
+        </div>
+      </div>
+      <div class="navbar">
+        <div class="nav-item" data-goto="s-notes"><div class="wf-icon sm"></div><span>笔记</span></div>
+        <div class="nav-item" data-goto="s-todos"><div class="wf-icon sm"></div><span>待办</span></div>
+        <div class="nav-item active"><div class="wf-icon sm"></div><span>设置</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 07 隐私与存储说明 ============ -->
+  <section class="screen" id="s-privacy">
+    <div class="screen-label">07 隐私与存储说明 <span>告知用户数据存哪里、有什么风险</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="wf-icon" data-goto="s-settings">返回</div>
+        <div class="ab-title">隐私与存储</div>
+      </div>
+      <div class="body">
+        <div class="strong">你的数据只保存在这台设备上</div>
+        <div class="wf-col" style="gap:6px;">
+          <div class="wf-line"></div>
+          <div class="wf-line"></div>
+          <div class="wf-line w80"></div>
+        </div>
+        <div class="wf-card" style="cursor:default; gap:12px;">
+          <div class="wf-row"><div class="wf-icon sm">DB</div><div class="wf-col" style="flex:1; gap:6px;"><div>笔记 / 待办 / 标签</div><div class="hint-text">本地数据库（加密）</div></div></div>
+          <div class="wf-divider"></div>
+          <div class="wf-row"><div class="wf-icon sm">FILE</div><div class="wf-col" style="flex:1; gap:6px;"><div>图片 / 录音 / 附件</div><div class="hint-text">App 沙盒私有目录，数据库仅存路径</div></div></div>
+          <div class="wf-divider"></div>
+          <div class="wf-row"><div class="wf-icon sm">KV</div><div class="wf-col" style="flex:1; gap:6px;"><div>主题 / 排序 / 密码锁设置</div><div class="hint-text">轻量键值存储（SharedPreferences）</div></div></div>
+        </div>
+        <div class="wf-note">风险提示：手机损坏、恢复出厂、卸载 App 会导致未备份数据丢失，建议定期备份。</div>
+        <div class="wf-btn" data-goto="s-backup">前往备份与恢复</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 08 加密与生物识别 ============ -->
+  <section class="screen" id="s-security">
+    <div class="screen-label">08 加密与生物识别 <span>SQLCipher · 应用密码 · 指纹/面容</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="wf-icon" data-goto="s-settings">返回</div>
+        <div class="ab-title">加密与生物识别</div>
+      </div>
+      <div class="body tight">
+        <div class="list-row">
+          <div class="lr-main"><div>加密本地数据库</div><div class="lr-sub">SQLCipher，默认开启</div></div>
+          <div class="wf-switch on"></div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main"><div>应用密码锁</div><div class="lr-sub">打开 App 时验证</div></div>
+          <div class="wf-switch on"></div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main"><div>指纹 / 面容解锁</div><div class="lr-sub">需系统已录入生物识别</div></div>
+          <div class="wf-switch"></div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main"><div>修改应用密码</div></div>
+          <div class="lr-arrow">›</div>
+        </div>
+        <div style="padding:16px;">
+          <div class="wf-note">关闭加密需验证应用密码；忘记密码将无法解密已备份数据。低端机型解密可能有轻微卡顿。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 09 主题 ============ -->
+  <section class="screen" id="s-theme">
+    <div class="screen-label">09 主题 <span>跟随系统 / 浅色 / 深色 · Material 3 默认配色</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="wf-icon" data-goto="s-settings">返回</div>
+        <div class="ab-title">主题</div>
+      </div>
+      <div class="body tight">
+        <div class="list-row">
+          <div class="wf-radio on"></div>
+          <div class="lr-main"><div>跟随系统</div></div>
+        </div>
+        <div class="list-row">
+          <div class="wf-radio"></div>
+          <div class="lr-main"><div>浅色</div></div>
+        </div>
+        <div class="list-row">
+          <div class="wf-radio"></div>
+          <div class="lr-main"><div>深色</div></div>
+        </div>
+        <div class="section-title">预览</div>
+        <div class="wf-card" style="margin:0 16px; cursor:default;">
+          <div class="strong">笔记标题</div>
+          <div class="wf-line"></div>
+          <div class="wf-line w80"></div>
+        </div>
+        <div style="padding:16px;">
+          <div class="wf-note">本页只切换 ThemeMode，配色全部使用 ColorScheme 默认值，不自定义色值。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 10 备份与恢复 ============ -->
+  <section class="screen" id="s-backup">
+    <div class="screen-label">10 备份与恢复 <span>加密备份包 · 本地保存 · 保留最近 3 份</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="wf-icon" data-goto="s-settings">返回</div>
+        <div class="ab-title">备份与恢复</div>
+      </div>
+      <div class="body">
+        <div class="wf-card" style="cursor:default;">
+          <div class="hint-text">上次备份</div>
+          <div class="strong" style="font-size:16px;">2026-11-19 02:00</div>
+          <div class="hint-text">本地共 3 份备份 · 均在本机</div>
+        </div>
+        <div class="wf-btn filled block">立即备份</div>
+        <div class="wf-btn block">从备份恢复</div>
+        <div class="list-row" style="border:1px solid #ddd; border-radius:12px; padding:8px 12px;">
+          <div class="lr-main"><div>自动本地备份</div><div class="lr-sub">每天 02:00 · 保留最近 3 份</div></div>
+          <div class="wf-switch on"></div>
+        </div>
+        <div class="label">备份记录</div>
+        <div class="wf-card" style="cursor:default;">
+          <div class="wf-row between"><div>backup_20261119_0200.zip</div><div class="hint-text">12.6 MB</div></div>
+          <div class="wf-row between"><div>backup_20261118_0200.zip</div><div class="hint-text">12.4 MB</div></div>
+          <div class="wf-row between"><div>backup_20261117_0200.zip</div><div class="hint-text">12.1 MB</div></div>
+        </div>
+        <div class="wf-note">恢复会覆盖当前全部笔记，需输入备份密码；备份只生成在本机，不会自动上传。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 11 云同步 ============ -->
+  <section class="screen" id="s-sync">
+    <div class="screen-label">11 云同步（可选） <span>默认关闭 · 以本地为基准双向合并</span></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="sb-icons"><i></i><i></i><i></i></span></div>
+      <div class="appbar">
+        <div class="wf-icon" data-goto="s-settings">返回</div>
+        <div class="ab-title">云同步</div>
+      </div>
+      <div class="body">
+        <div class="list-row" style="border:1px solid #ddd; border-radius:12px; padding:8px 12px;">
+          <div class="lr-main"><div>开启云同步</div><div class="lr-sub">当前：关闭（纯本地模式）</div></div>
+          <div class="wf-switch"></div>
+        </div>
+        <div class="wf-col" style="gap:6px;">
+          <div class="wf-line"></div>
+          <div class="wf-line"></div>
+          <div class="wf-line w80"></div>
+        </div>
+        <div class="wf-card" style="cursor:default; gap:10px;">
+          <div class="wf-row"><div class="wf-icon sm">1</div><div>以本地数据为基准，双向合并</div></div>
+          <div class="wf-row"><div class="wf-icon sm">2</div><div>网络差时自动切回纯本地模式</div></div>
+          <div class="wf-row"><div class="wf-icon sm">3</div><div>关闭后不再上传任何新数据</div></div>
+        </div>
+        <div class="wf-btn filled block disabled">立即同步（未开启）</div>
+        <div class="wf-note">未开启云同步时，App 无需联网权限，所有功能离线可用。</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // 骨架阶段仅实现「点击跳转到目标页面并高亮」，无任何业务逻辑
+  document.querySelectorAll('[data-goto]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var target = document.getElementById(el.getAttribute('data-goto'));
+      if (!target) return;
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      var phone = target.querySelector('.phone');
+      phone.classList.add('flash');
+      setTimeout(function () { phone.classList.remove('flash'); }, 1200);
+    });
+  });
+</script>
+</body>
+</html>
